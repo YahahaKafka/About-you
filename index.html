@@ -226,7 +226,8 @@ function apply(i){
  m.classList.toggle('fl',!!s.flowers);m.classList.toggle('heart',!!s.heart);m.classList.toggle('outro',!!s.outro);
  m.classList.toggle('v1',s.vinyl===1);m.classList.toggle('v2',s.vinyl===2);
  cards.forEach((c,k)=>c.classList.toggle('on',k===i));
- if(m.classList.contains('started'))cards[i].scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
+ if(m.classList.contains('started')){const c=cards[i];
+  tl.scrollTo({left:tl.scrollLeft+c.getBoundingClientRect().left-tl.getBoundingClientRect().left-(tl.clientWidth-c.offsetWidth)/2,behavior:'smooth'})}
  const my=++tok;m.classList.add('swap');
  setTimeout(()=>{if(my!==tok)return;$('#lyric').innerHTML=s.outro?'':s.text;m.classList.remove('swap')},320);
 }
