@@ -9,13 +9,66 @@
 <style>
 :root{--bg:#0b0705;--gold:#e8c28a;--cream:#efe3cc;--mut:#a8987f;--ink:#3a2818}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:var(--bg);color:var(--cream);font-family:'IBM Plex Mono','Courier New',monospace;overflow:hidden}
-body{display:flex;flex-direction:column}
+html,body{
+  height:100%;
+  height:100dvh;
+  background:var(--bg);
+  color:var(--cream);
+  font-family:'IBM Plex Mono','Courier New',monospace;
+  overflow:hidden;
+  overscroll-behavior:none;
+  touch-action:manipulation;
+  position:relative;
+}
 button{background:none;border:0;color:inherit;font:inherit;cursor:pointer}
 button:focus-visible,.card:focus-visible,.bar:focus-visible{outline:1px solid var(--gold);outline-offset:3px}
-main{position:relative;flex:1;min-height:0;overflow:hidden}
+
+/* ===== LAYOUT FIXED: position absolute — tidak mungkin collapse ===== */
+main{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:156px; /* ruang untuk timeline + foot */
+  overflow:hidden;
+}
 main>*{position:absolute}
-/* Lapisan dibuat eksplisit agar overlay tidak menutupi foto dan teks saat scene berganti. */
+
+.tl{
+  position:absolute;
+  left:0;right:0;
+  bottom:36px;
+  height:120px;
+  display:flex;
+  gap:10px;
+  padding:10px clamp(12px,2vw,32px);
+  overflow-x:auto;
+  overflow-y:hidden;
+  overscroll-behavior-x:contain;
+  overscroll-behavior-y:none;
+  -webkit-overflow-scrolling:touch;
+  background:#0a0604;
+  border-top:1px solid #2a2018;
+  scrollbar-width:thin;
+  scrollbar-color:#3a2e24 transparent;
+}
+.foot{
+  position:absolute;
+  left:0;right:0;
+  bottom:0;
+  height:36px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  justify-content:space-between;
+  padding:0 clamp(16px,3vw,46px);
+  font-size:10px;
+  letter-spacing:.18em;
+  background:#0a0604;
+  text-transform:uppercase;
+}
+
+/* Lapisan */
 .bg{z-index:0}
 .sun{z-index:0;pointer-events:none}
 
@@ -81,7 +134,7 @@ main.swap #lyric{opacity:0}
 /* outro */
 .outro{inset:0;display:grid;place-items:center;font-family:'Mrs Saint Delafield',cursive;font-size:clamp(46px,7vw,100px);text-align:center;z-index:6;opacity:0;pointer-events:none;transition:opacity 2s;text-shadow:0 4px 30px #000;padding:0 8vw}
 main.outro .outro{opacity:1}
-main.fade .polaroid,main.fade .paperwrap,main.fade .left,main.fade .flowers,main.fade .candle{opacity:.28}
+main.fade .polaroid,main.fade .paperwrap,main.fade .left,main.fade .flowers,main.fade .candle{opacity:.28!important}
 
 .corner{bottom:5vh;font-size:10px;line-height:1.8;letter-spacing:.14em;color:var(--mut);z-index:5;text-transform:uppercase}
 .cl{left:clamp(16px,3vw,46px);text-transform:none;letter-spacing:.08em;max-width:90px}.cr{right:clamp(16px,3vw,46px);text-align:right}
@@ -92,7 +145,7 @@ main.fade .polaroid,main.fade .paperwrap,main.fade .left,main.fade .flowers,main
 .bar{padding:8px 0;cursor:pointer;touch-action:none}
 .track{height:2px;background:rgba(255,255,255,.25);position:relative}
 .fill{height:100%;width:0;background:#fff}
-.fill::after{content:"";position:absolute;right:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:#fff;translate:calc((var(--p,0) - 1)*0px) 0}
+.fill::after{content:"";position:absolute;right:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:#fff}
 .ctrl{display:flex;justify-content:center;align-items:center;gap:clamp(16px,2.2vw,30px);margin-top:8px}
 .ctrl svg{width:16px;height:16px;display:block}
 .ctrl button{opacity:.85}.ctrl button.on{color:var(--gold);opacity:1}
@@ -100,30 +153,34 @@ main.fade .polaroid,main.fade .paperwrap,main.fade .left,main.fade .flowers,main
 .pp svg{width:18px;height:18px}.pp .ip{display:none}
 main.playing .pp .ip{display:block}main.playing .pp .il{display:none}
 
-/* garis waktu */
-.tl{display:flex;gap:10px;padding:12px clamp(12px,2vw,32px);height:clamp(140px,24vh,200px);overflow-x:auto;background:#0a0604;border-top:1px solid #2a2018;scrollbar-width:thin;scrollbar-color:#3a2e24 transparent}
 .card{flex:1 0 128px;display:flex;flex-direction:column;border:1px solid #3a2e24;border-radius:6px;overflow:hidden;background:#120d0a;cursor:pointer;opacity:.6;transition:opacity .4s,border-color .4s;text-align:left}
 .card.on{border-color:var(--gold);opacity:1}
 .th{flex:1;min-height:0;background-image:url(foto1.jpg);background-size:260%;filter:sepia(.4) brightness(.72)}
 .meta{padding:7px 10px 9px;border-top:1px solid #2a2018}
 .t{font-size:9.5px;color:var(--mut);margin-bottom:4px}
 .c{font-size:10.5px;line-height:1.4;color:var(--cream)}
-.foot{display:flex;align-items:center;gap:20px;justify-content:space-between;padding:0 clamp(16px,3vw,46px);height:36px;font-size:10px;letter-spacing:.18em;background:#0a0604;text-transform:uppercase}
 .foot hr{flex:1;border:0;height:1px;background:#3a2e24;margin-left:30%}.foot span:last-child{color:var(--mut)}
 
 @media (max-width:760px){
- .polaroid{left:50%;translate:-50% 0;top:11%;width:min(80vw,46vh)}
- .paperwrap{right:4%;top:36%;width:60vw;min-width:0}
- .paper{font-size:clamp(16px,4.6vw,21px)}
- .left{left:6vw;right:6vw;width:auto;max-width:none;top:auto;bottom:21%;text-align:center}
- .title{font-size:64px;rotate:-3deg;transform-origin:center;display:inline-block}
- main.started .title{display:none}
- .stack{min-height:70px;margin-top:6px}.stack>*{left:0;right:0}.enter{justify-content:center}
- #lyric{font-size:22px}
- .player{left:50%;width:86vw;bottom:2vh}
- .corner,.foot,.flowers{display:none}.flowers{display:block;height:40%;opacity:.12}
- .tl{height:128px}.card{flex-basis:120px}
- .vinyl{width:34vh}
+  main{bottom:130px}
+  .tl{height:94px;bottom:0;padding:8px 10px}
+  .foot{display:none}
+  .polaroid{left:50%;translate:-50% 0;top:8%;width:min(78vw,38vh);max-height:38vh}
+  .paperwrap{right:3%;top:34%;width:56vw;min-width:0;max-width:220px}
+  .paper{font-size:clamp(14px,4.2vw,18px)}
+  .left{left:5vw;right:5vw;width:auto;max-width:none;top:auto;bottom:18%;text-align:center}
+  .title{font-size:48px;rotate:-3deg;transform-origin:center;display:inline-block}
+  main.started .title{display:none}
+  .stack{min-height:56px;margin-top:4px}.stack>*{left:0;right:0}.enter{justify-content:center}
+  #lyric{font-size:18px}
+  .player{left:50%;width:88vw;bottom:1.2vh}
+  .corner{display:none}
+  .flowers{display:block;height:34%;opacity:.12;left:-2%}
+  .card{flex-basis:100px}
+  .vinyl{width:28vh}
+  main:not(.fade) .polaroid,
+  main:not(.fade) .paperwrap{opacity:1}
+  main.zoom:not(.fade) .paperwrap{opacity:.68}
 }
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01s!important;animation:none!important}}
 </style>
@@ -225,14 +282,18 @@ function apply(i){
  if(i<0||i>=scenes.length)return;
  cur=i;const s=scenes[i];
  let note=1;for(let k=0;k<=i;k++)if(scenes[k].note)note=scenes[k].note;
- // Setiap scene mengatur ulang semua state visual agar efek lama tidak tertinggal.
  m.classList.toggle('zoom',s.paper==='zoom');
  m.classList.toggle('fade',s.paper==='fade');
  m.classList.toggle('n1',note===1);m.classList.toggle('n2',note===2);
  m.classList.toggle('fl',!!s.flowers);m.classList.toggle('heart',!!s.heart);m.classList.toggle('outro',!!s.outro);
  m.classList.toggle('v1',s.vinyl===1);m.classList.toggle('v2',s.vinyl===2);
  cards.forEach((c,k)=>c.classList.toggle('on',k===i));
- if(m.classList.contains('started'))cards[i].scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
+ // Scroll horizontal SAJA di dalam .tl
+ if(m.classList.contains('started')){
+  const card=cards[i];
+  const target=card.offsetLeft-(tl.clientWidth-card.offsetWidth)/2;
+  tl.scrollTo({left:Math.max(0,target),behavior:'smooth'});
+ }
  const my=++tok;m.classList.add('swap');
  setTimeout(()=>{
   if(my!==tok)return;
